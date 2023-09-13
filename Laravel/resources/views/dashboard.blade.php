@@ -12,8 +12,8 @@
             <a class="navbar-brand" href="#">Payroll System</a>
           </div>
           <ul class="nav navbar-nav">
-            <li><a href="#">Home</a></li>
-            <li class="active"><a href="/">User Management</a></li>
+            <li><a href="/dashboard">Home</a></li>
+            <li><a href="/employees">User Management</a></li>
             <li><a href="#">Payroll</a></li>
             <li><a href="#">Reports</a></li>
           </ul>
@@ -23,14 +23,7 @@
        
         <form action ="/" method="POST">
         
-        <input name = "LastName" type ="textarea" placeholder ="LastName"> <br>
-        <input name = "FirstName" type ="textarea" placeholder ="FirstName"> <br>
-        <input name = "MiddleName" type ="textarea" placeholder ="MiddleName"> <br>
-        <input name = "Contact Information" type ="textarea" placeholder ="Contact No."> <br>
-        
-
-        <button>Add</button>
-
+      
         
     </form>
 </body>

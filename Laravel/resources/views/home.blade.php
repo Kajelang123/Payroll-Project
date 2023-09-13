@@ -6,23 +6,6 @@
 </head>
 <body>
 
-    @auth
-    <p>Hello! Welcome</p>
-    <form action ="/logout" method="POST">
-        @csrf
-        <button>Logout</button>
-    @else
-    <div>
-        <h2>Registration Form</h2>
-        <form action ="/register" method="POST">
-        @csrf
-        <input name = "name" type ="text" placeholder ="name">
-        <input name = "email" type ="text" placeholder ="email">
-        <input name = "password" type ="password" placeholder ="password">
-        <button>Register</button>
-
-
-    </form>
 
     <div>
         <h2>Login</h2>
@@ -36,7 +19,6 @@
     </form>
 
 
-    @endauth
 </div>
 </body>
 </html>
