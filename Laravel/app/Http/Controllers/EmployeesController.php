@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Employees; // Assuming your model is named 'Employee'
+use App\Models\Employees;
+use App\Models\Payroll;
 
 class EmployeesController extends Controller
 {
@@ -22,6 +23,8 @@ class EmployeesController extends Controller
             'last_name' => 'required',
             'Email' => 'required',
             'position' =>'required',
+            'EmployeeID' =>'required',
+            'Contact'=>'required',
         ]);
 
         $first_name = $request->first_name;
@@ -29,6 +32,8 @@ class EmployeesController extends Controller
         $last_name = $request->last_name;
         $email = $request->Email;
         $Position = $request->position;
+        $empid = $request->EmployeeID;
+        $contact = $request->Contact;
     
         $emp = new Employees();
         $emp->FirstName = $first_name;
@@ -36,6 +41,8 @@ class EmployeesController extends Controller
         $emp->LastName = $last_name;
         $emp->Email = $email;
         $emp->Position = $Position;
+        $emp->EmployeeID =$empid;
+        $emp->Contact = $contact;
         $emp->save();
     
         return redirect()->back()->with('success', 'Employee Added Successfully');
@@ -56,6 +63,8 @@ class EmployeesController extends Controller
             'last_name' => 'required',
             'Email' => 'required',
             'position' =>'required',
+            'EmployeeID' =>'required',
+            'Contact'=>'required',
         ]);
         $id = $request->id;
         $first_name = $request->first_name;
@@ -63,6 +72,9 @@ class EmployeesController extends Controller
         $last_name = $request->last_name;
         $email = $request->Email;
         $Position = $request->position;
+        $empid = $request->EmployeeID;
+        $contact = $request->Contact;
+
 
         Employees::where('id', '=', $id)->update([
             'FirstName' =>$first_name,
@@ -70,9 +82,16 @@ class EmployeesController extends Controller
             'LastName' =>$last_name,
             'email' =>$email,
             'position' =>$Position,
+            'Contact' =>$contact,
+            'EmployeeID' =>$empid,
+            
         ]);
         return redirect()->back()->with('success', 'Updated Employee Successfully');
     
+    }
+    public function deleteEmployee($id){
+        Employees::where('id', '=',$id)->delete();
+        return redirect()->back()->with('success', 'Deleted Employee Successfully');
     }
 }
 

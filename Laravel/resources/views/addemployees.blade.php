@@ -73,14 +73,32 @@
                             {{$message}}
                         @enderror
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Contact No.</label>
+                        <input type="text" class="form-control" name="Contact" placeholder="Enter your Contact No.">
+                        @error('Contact')
+                        <div class="alert alert-warning" role="alert">
+                            {{$message}}
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">RFID</label>
+                        <input type="text" class="form-control" name="EmployeeID" placeholder="Scan your RFID">
+                        @error('RFID')
+                        <div class="alert alert-warning" role="alert">
+                            {{$message}}
+                        @enderror
+                    </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
 
                     <a href="{{url('employees')}}" class="btn btn-danger">Cancel</a>
 
+                    
+                </form>
+                </form>
 
-                </form>
-                </form>
             </div>
     </div>
+    
 </body>
 </html>

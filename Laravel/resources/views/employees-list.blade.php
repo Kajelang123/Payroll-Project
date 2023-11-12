@@ -15,7 +15,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="/dashboard">Home</a></li>
                 <li><a href="/employees">User Management</a></li>
-                <li><a href="#">Payroll</a></li>
+                <li><a href="/payroll">Payroll</a></li>
                 <li><a href="#">Reports</a></li>
             </ul>
         </div>
@@ -36,22 +36,25 @@
                         <th>LastName</th>
                         <th>Email</th>
                         <th>Position</th>
+                        <th>Contact</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
                   @foreach ($employees as $emp)
                   <tr>
-                      <td>{{ $emp->id }}</td>
+                      <td>{{ $emp->EmployeeID }}</td>
                       <td>{{ $emp->FirstName }}</td>
                       <td>{{ $emp->MiddleName }}</td>
                       <td>{{ $emp->LastName }}</td>
                       <td>{{ $emp->Email }}</td>
                       <td>{{ $emp->Position }}</td>
+                      <td>{{ $emp->Contact }}</td>
                       <td>
                         <a href="{{url('edit-employees/'. $emp->id)}}" class="btn btn-primary btn-sm">Edit</a>
                     </td>
                     <td>
-                        <a href="" class="btn btn-danger btn-sm">Delete</a>
+                        <a href="{{url('delete-employees/'. $emp->id)}}" class="btn btn-danger btn-sm">Delete</a>
                     </td>
                 </tr>
                   </tr>

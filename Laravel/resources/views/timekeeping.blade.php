@@ -11,19 +11,17 @@
           <div class="navbar-header">
             <a class="navbar-brand" href="#">Payroll System</a>
           </div>
-          <ul class="nav navbar-nav">
-            <li><a href="/dashboard">Home</a></li>
-            <li><a href="/employees">User Management</a></li>
-            <li><a href="/payroll">Payroll</a></li>
-            <li><a href="#">Reports</a></li>
-          </ul>
-        </div>
       </nav>
-      <div>
+    </div>
        
-        <form action ="/" method="POST">
+    <form method="post" action="{{url('/')}}">
+        @csrf
+        <div class="container" style="align-items: center">
+    
+            <label class="form-label">Scan your RFID</label>
+            <input type="text" class="form-control" name="scan" placeholder="Scan Your RFID">
         
-      
+        </div>
         
     </form>
 </body>
