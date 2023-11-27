@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('employees', function (Blueprint $table) {
         //
         $table->string('EmployeeID');
-
+        $table->string('Department');
         });
     }
 

@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payroll_e_s', function (Blueprint $table) {
+        Schema::create('timekeepings', function (Blueprint $table) {
             $table->id();
             $table->string('EmployeeID');
             $table->string('EmployeeName');
-            $table->string('Salary');
-            $table->string('RPH');
-            $table->string('TotalHrs');
-            $table->string('SSS');
-            $table->string('Benefits');
+            $table->timestamp('TimeIn')->nullable();
+            $table->timestamp('TimeOut')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payroll_e_s');
+        Schema::dropIfExists('timekeepings');
     }
 };

@@ -14,7 +14,8 @@
             </div>
             <ul class="nav navbar-nav">
                 <li><a href="/dashboard">Home</a></li>
-                <li><a href="/employees">User Management</a></li>
+                <li><a href="#">User Management</a></li>
+                <li><a href="/employees">Employees Management</a></li>
                 <li><a href="/payroll">Payroll</a></li>
                 <li><a href="#">Reports</a></li>
             </ul>
@@ -37,6 +38,7 @@
                         <th>Email</th>
                         <th>Position</th>
                         <th>Contact</th>
+                        <th>Department</th>
                         
                     </tr>
                 </thead>
@@ -50,6 +52,7 @@
                       <td>{{ $emp->Email }}</td>
                       <td>{{ $emp->Position }}</td>
                       <td>{{ $emp->Contact }}</td>
+                      <td>{{ $emp->Department }}</td>
                       <td>
                         <a href="{{url('edit-employees/'. $emp->id)}}" class="btn btn-primary btn-sm">Edit</a>
                     </td>

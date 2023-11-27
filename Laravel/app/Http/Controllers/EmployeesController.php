@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Employees;
 use App\Models\Payroll;
+use App\Models\Timekeeping;
 
 class EmployeesController extends Controller
 {
@@ -25,6 +26,7 @@ class EmployeesController extends Controller
             'position' =>'required',
             'EmployeeID' =>'required',
             'Contact'=>'required',
+            'Department'=>'required',
         ]);
 
         $first_name = $request->first_name;
@@ -34,6 +36,7 @@ class EmployeesController extends Controller
         $Position = $request->position;
         $empid = $request->EmployeeID;
         $contact = $request->Contact;
+        $department = $request->Department;
     
         $emp = new Employees();
         $emp->FirstName = $first_name;
@@ -43,6 +46,7 @@ class EmployeesController extends Controller
         $emp->Position = $Position;
         $emp->EmployeeID =$empid;
         $emp->Contact = $contact;
+        $emp->Department = $department;
         $emp->save();
     
         return redirect()->back()->with('success', 'Employee Added Successfully');
@@ -65,6 +69,8 @@ class EmployeesController extends Controller
             'position' =>'required',
             'EmployeeID' =>'required',
             'Contact'=>'required',
+            'Department'=>'required',
+            
         ]);
         $id = $request->id;
         $first_name = $request->first_name;
@@ -74,6 +80,7 @@ class EmployeesController extends Controller
         $Position = $request->position;
         $empid = $request->EmployeeID;
         $contact = $request->Contact;
+        $department =$request->Department;
 
 
         Employees::where('id', '=', $id)->update([
@@ -84,6 +91,7 @@ class EmployeesController extends Controller
             'position' =>$Position,
             'Contact' =>$contact,
             'EmployeeID' =>$empid,
+            'Department' =>$department,
             
         ]);
         return redirect()->back()->with('success', 'Updated Employee Successfully');

@@ -14,7 +14,8 @@
           </div>
           <ul class="nav navbar-nav">
             <li><a href="/dashboard">Home</a></li>
-            <li><a href="/employees">User Management</a></li>
+            <li><a href="#">User Management</a></li>
+            <li><a href="/employees">Employees Management</a></li>
             <li><a href="/payroll">Payroll</a></li>
             <li><a href="#">Reports</a></li>
           </ul>
@@ -30,11 +31,11 @@
                 </button>
             </div>
             <h2>Payroll</h2>
-
+            
             <table class="table">
                 <thead>
                     <tr>
-                        <th>iD</th>
+                        <th>EmployeeID</th>
                         <th>EmployeeName</th>
                         <th>Salary</th>
                         <th>Rate Per Hour</th>
@@ -48,7 +49,7 @@
                 <tbody>
                   @foreach ($payroll as $pay)
                   <tr>
-                      <td>{{ $pay->id }}</td>
+                      <td>{{ $pay->EmployeeID }}</td>
                       <td>{{ $pay->EmployeeName }}</td>
                       <td>{{ $pay->Salary }}</td>
                       <td>{{ $pay->RPH }}</td>
@@ -69,7 +70,7 @@
             </table>
         </div>
     </div>
-        </div>
+</div>
     
         <!-- Modal -->
         <div class="modal fade" id="myModal" role="dialog">
@@ -87,11 +88,21 @@
                         <form action="{{ route('save-payroll') }}" method="POST">
                             @csrf
                             <div class="form-group">
+                                <label class="form-label">EmployeeID</label>
+                                <input type="text" class="form-control" name="employeeID" id="employeeID" placeholder="Enter Employee ID" value="{{ old('employeeID') }}" readonly>
+
+                                @error('employeeID')
+                                    <div class="alert alert-warning" role="alert">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                                <div class="form-group">
                                 <label class="form-label" for="dropdown">Employee Name</label>
                                 <select id="dropdown" name="employeeName">
-                                    @foreach ($employees as $emp)
-                                        <option value="{{ $emp->FirstName . ' ' . $emp->MiddleName . ' ' . $emp->LastName }}">
-                                            {{ $emp->FirstName . ' ' . $emp->MiddleName . ' ' . $emp->LastName }}
+                                    @foreach ($timekeeping->pluck('EmployeeName')->unique() as $employeeName)
+                                        <option>
+                                            {{ $employeeName }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -101,6 +112,7 @@
                                     </div>
                                 @enderror
                             </div>
+
                             <div class="form-group">
                                 <label class="form-label">Rate Per Hour</label>
                                 <input type="text" class="form-control" name="rph" placeholder="Enter Rate Per Hour" value="{{ old('rph') }}">
@@ -119,15 +131,23 @@
                                     </div>
                                 @enderror
                             </div>
+                            <div class ="form-group">
+                            <label for="start_date">Start Date:</label>
+                            <input type="date" name="start_date" required>
+                            </div>
+                            <div class ="form-group">
+                            <label for="end_date">End Date:</label>
+                            <input type="date" name="end_date" required>
+                            </div>
                             <div class="form-group">
                                 <label class="form-label">Total Work Hours</label>
-                                <input type="text" class="form-control" name="twh" placeholder="Enter the Total Work Hours" value="{{ old('twh') }}">
+                                <input type="text" class="form-control" name="twh" placeholder="Enter the Total Work Hours" value="{{ old('twh') }}" readonly>
                                 @error('twh')
                                     <div class="alert alert-warning" role="alert">
                                         {{ $message }}
                                     </div>
                                 @enderror
-                            </div>
+                            </div>                            
                             <div class="form-group">
                                 <label class="form-label">Deduction</label>
                                 <input type="text" class="form-control" name="deduction" value="900" readonly>
@@ -163,7 +183,40 @@
     
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
+    <script>
+        $(document).ready(function () {
+            $('#dropdown, input[name="start_date"], input[name="end_date"]').change(function () {
+                updateTotalHours();
+            });
     
+            function updateTotalHours() {
+                var employeeName = $('#dropdown').val();
+                var startDate = $('input[name="start_date"]').val();
+                var endDate = $('input[name="end_date"]').val();
+                
+    
+                // Make an AJAX request to get the total hours
+                $.ajax({
+                    url: '{{ route('getTotalHours')}}',
+                    type: 'GET',
+                    data: {
+                        employeeName: employeeName,
+                        start_date: startDate,
+                        end_date: endDate
+                    },
+                    success: function (response) {
+                        // Update the total work hours field in the form
+                        $('input[name="twh"]').val(response.totalHours);
+                        $('input[name="employeeID"]').val(response.employeeID);
+
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+    </script>
+        
 </body>
 </html>

@@ -13,7 +13,8 @@
           </div>
           <ul class="nav navbar-nav">
             <li><a href="/dashboard">Home</a></li>
-            <li><a href="/employees">User Management</a></li>
+            <li><a href="/UserManagement">User Management</a></li>
+            <li><a href="/employees">Employees Management</a></li>
             <li><a href="/payroll">Payroll</a></li>
             <li><a href="#">Reports</a></li>
           </ul>

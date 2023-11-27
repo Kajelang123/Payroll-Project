@@ -14,7 +14,8 @@
             </div>
             <ul class="nav navbar-nav">
                 <li><a href="/dashboard">Home</a></li>
-                <li><a href="/employees">User Management</a></li>
+                <li><a href="#">User Management</a></li>
+                <li><a href="/employees">Employees Management</a></li>
                 <li><a href="#">Payroll</a></li>
                 <li><a href="#">Reports</a></li>
             </ul>
@@ -77,7 +78,15 @@
                     <div class="form-group">
                         <label class="form-label">Contact No.</label>
                         <input type="text" class="form-control" name="Contact" placeholder="Enter your Contact No" value = {{$data->Contact}}>
-                        @error('position')
+                        @error('contact')
+                        <div class="alert alert-warning" role="alert">
+                            {{$message}}
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Department</label>
+                        <input type="text" class="form-control" name="Department" placeholder="Enter your Contact No" value = {{$data->Department}}>
+                        @error('Department')
                         <div class="alert alert-warning" role="alert">
                             {{$message}}
                         @enderror
@@ -85,18 +94,19 @@
                     <div class="form-group">
                         <label class="form-label">RFID</label>
                         <input type="text" class="form-control" name="EmployeeID" placeholder="Enter your RFID" value = {{$data->EmployeeID}}>
-                        @error('position')
+                        @error('EmployeeID')
                         <div class="alert alert-warning" role="alert">
                             {{$message}}
                         @enderror
                     </div>
+
                     <button type="submit" class="btn btn-primary">Submit</button>
 
                     <a href="{{url('employees')}}" class="btn btn-danger">Cancel</a>
 
 
                 </form>
-                </form>
+    
             </div>
     </div>
 </body>
