@@ -47,13 +47,14 @@ class Payroll extends Controller
             'employeeID' => 'required',
             'employeeName' => 'required',
             'rph' => 'required',
-            'salary',
+            'salary' => 'required',
             'twh' => 'required',
         ]);
         $id = $request->iD;
         $employeeID = $request->employeeID;
         $employeeName = $request->employeeName;
         $rph = $request->rph;
+        $salary = $request->salary;
         $twh = $request->twh;
         $sss = $request->sss;
         $philhealth = $request->philhealth;
@@ -70,10 +71,9 @@ class Payroll extends Controller
         $totalovertimecalculation = $rph * $totalovertime;
         $totalHoursWorked = $twh;
         $totalHoursWorkedwithLate = $totalHoursWorked - $totalLate;
-        $grossincome = ($rph/8 )* $totalHoursWorkedwithLate;
+        $grossincome = ($rph * $totalHoursWorkedwithLate) + $benefits + $totalovertimecalculation;
         $totaldeduction = $s3 + $ph + $trulab;
         $netincome = $grossincome - $totaldeduction;
-        $salary = $rph * $totalHoursWorkedwithLate;
 
         $tax = new Taxation();
         $tax->EmployeeID = $employeeID;
@@ -118,8 +118,6 @@ class Payroll extends Controller
 
         $employeeID = Timekeeping::where('EmployeeName', $employeeName)
         ->value('EmployeeID');
-
-        
         
         $totalHours =$this->calculateTotalHoursForDateRange($employeeName, $startDate, $endDate);
         $totalLate =$this->calculateTotalLateArrival($employeeName, $startDate, $endDate);
@@ -130,16 +128,9 @@ class Payroll extends Controller
     
 
         $salary = $totalhourswithLate * $rph;
-
-        $tax = $this->GetTax($salary);
-        
-        $totalincome = $salary - $tax;
-        $timekeepingData = $this->getTimekeepingData($employeeID, $startDate, $endDate);
-
-        
         
         return response()->json(['totalHours' => $totalHours, 'totalLate' => $totalLate, 'employeeID' =>$employeeID,
-         'totalOvertime' => $totalOvertime, 'rateperday' => $rateperday, 'salary'=> $salary, 'tax' => $tax, 'totalincome' => $totalincome, 'timekeepingData'=> $timekeepingData ]);
+         'totalOvertime' => $totalOvertime, 'rateperday' => $rateperday, 'salary'=> $salary]);
     }
     public function calculateTotalHoursForDateRange($employeeName, $startDate, $endDate)
     {
@@ -290,31 +281,6 @@ public function GetRatePerDay($employeeID){
 
   
     return $rpd;
-
-}
-public function GetTax($salary){
-    if ($salary <= 4808){
-        $tax = 0;
-    
-    }
-    else if ($salary > 4808 && $salary <= 7691){
-        $tax = $salary * 0.15;
-      
-    }else if ($salary > 7691 && $salary <= 15384){
-        $tax = ($salary * 0.20)+ 432.60;
-
-        
-    }
-    return $tax;
-}
-protected function getTimekeepingData($employeeID, $startDate, $endDate)
-{
-    $newtime = Timekeeping::where('EmployeeID', $employeeID)
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get(['created_at', 'TimeIn', 'TimeOut', 'Overtime']);
-
-        return $newtime;
-
 
 }
 

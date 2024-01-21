@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('timekeepings', function (Blueprint $table) {
+        Schema::create('taxations', function (Blueprint $table) {
             $table->id();
             $table->string('EmployeeID');
             $table->string('EmployeeName');
-            $table->timestamp('TimeIn')->nullable();
-            $table->timestamp('TimeOut')->nullable();
-            $table->timestamp('LateArrival')->nullable();
-            $table->decimal('Overtime', 8, 2)->nullable();
+            $table->float('SSS')->nullable();
+            $table->float('PAGIBIG')->nullable();
+            $table->float('PHILHEALTH')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('timekeepings');
+        Schema::dropIfExists('taxations');
     }
 };

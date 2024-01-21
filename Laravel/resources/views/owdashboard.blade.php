@@ -5,7 +5,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ asset('WJMLOGO.png') }}">
-
     <style>
     body {
   font-family: Arial, sans-serif;
@@ -25,7 +24,7 @@
 .status {
   text-align: center;
   padding: 10px;
-  border: 1px solid #070101;
+  border: 1px solid #ccc;
   border-radius: 5px;
 }
 
@@ -38,7 +37,6 @@
   .employee-status {
     grid-template-columns: 1fr; /* Display one column for small screens */
   }
- 
 }
 .navbar {
         background-color: #FFD580; /* Change this color to your desired background color */
@@ -63,12 +61,27 @@
     .navbar-right {
         margin-right: 20px; /* Adjust the right margin for the right-aligned links */
     }
+  
 
     </style>
     <title>Home</title>
 </head>
 <body>
-  @if(Session::has('success'))
+    
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">Payroll System</a>
+          </div>
+          <ul class="nav navbar-nav">
+            <li><a href="/owdashboard">Home</a></li>
+            <li><a href="/ownerreports">Reports </a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/login"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+        </div>
+        @if(Session::has('success'))
             <div class="alert alert-success" role="alert">
                 {{Session::get('success')}}
             </div>
@@ -78,21 +91,8 @@
                 {{Session::get('failed')}}
             </div>
             @endif
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="#">Payroll System</a>
-          </div>
-          <ul class="nav navbar-nav">
-            <li><a href="/dashboard">Home</a></li>
-            <li><a href="/UserManagement">User Management</a></li>
-            <li><a href="/activitylogs">Activty Logs</a></li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="/login"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-        </ul>
-        </div>
       </nav>
+      
       <div>
         <div class="dashboard">
           <div class="employee-status">

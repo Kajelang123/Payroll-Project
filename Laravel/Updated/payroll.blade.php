@@ -82,8 +82,10 @@
     <div class="container" style="margin-top:20px">
         <div class="row">
             <div style="float: right">
-        
-                <div style="float: right"><a href="{{url('attendancetable')}}"><button type="button" class="btn btn-info">Add</button></a>
+                <!-- Add data-toggle and data-target attributes to open the modal -->
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
+                    Add
+                </button>
             </div>
             <h2>Payroll</h2>
             
@@ -93,7 +95,8 @@
                         <th>Date</th>
                         <th>EmployeeID</th>
                         <th>EmployeeName</th>
-                        <th>Rate Per Day</th>
+                        <th>Salary</th>
+                        <th>Rate Per Hour</th>
                         <th>Total Work Hours</th>
                         <th>Gross Income</th>
                         <th>Total Deductions</th>
@@ -107,6 +110,7 @@
                     <td>{{ $pay->created_at->format('Y-m-d') }}</td>
                       <td>{{ $pay->EmployeeID }}</td>
                       <td>{{ $pay->EmployeeName }}</td>
+                      <td>{{ "₱" .$pay->Salary  }}</td>
                       <td>{{ $pay->RPH }}</td>
                       <td>{{ $pay->TotalHrs }}</td>
                       <td>{{ $pay->GrossIncome }}</td>
@@ -159,7 +163,6 @@
                             <div class="form-group">
                                 <label class="form-label" for="dropdown">Employee Name</label>
                                 <select id="dropdown" name="employeeName">
-                                    <option>------------Select Employee------------</option>
                                     @foreach ($timekeeping->pluck('EmployeeName')->unique() as $employeeName)
                                         <option>
                                             {{ $employeeName }}
@@ -175,7 +178,7 @@
 
                             <div class="form-group">
                                 <label class="form-label">EmployeeID</label>
-                                <input type="text" class="form-control" name="employeeID" id="employeeID" value="{{ old('employeeID') }}" readonly>
+                                <input type="text" class="form-control" name="employeeID" id="employeeID" placeholder="Enter Employee ID" value="{{ old('employeeID') }}" readonly>
 
                                 @error('employeeID')
                                     <div class="alert alert-warning" role="alert">
@@ -187,13 +190,13 @@
                             <div class="form-group">
                                 <label class="form-label">Rate Per Day</label>
                                 <input type="text" class="form-control" name="rph" value="{{ old('rph') }}" readonly>
-                                @error('rph')
+                                @error('rpd')
                                     <div class="alert alert-warning" role="alert">
                                         {{ $message }}
                                     </div>
                                 @enderror
                             </div>
-                           <!----<div class="form-group">
+                            <div class="form-group">
                                 <label class="form-label">Salary</label>
                                 <input type="text" class="form-control" name="salary"  value="{{ old('salary') }}" readonly>
                                 @error('salary')
@@ -201,7 +204,7 @@
                                         {{ $message }}
                                     </div>
                                 @enderror
-                           ----->
+                            </div>
                             
                             <div class="form-group">
                                 <label class="form-label">Total Overtime Hours</label>
@@ -214,7 +217,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Total Work Hours</label>
-                                <input type="text" class="form-control" name="twh" value="{{ old('twh') }}" readonly>
+                                <input type="text" class="form-control" name="twh" placeholder="Enter the Total Work Hours" value="{{ old('twh') }}" readonly>
                                 @error('twh')
                                     <div class="alert alert-warning" role="alert">
                                         {{ $message }}
@@ -222,21 +225,10 @@
                                 @enderror
                             </div>
                             <label>Deductions</label>
-                            <br>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Tax</label>
-                                <input type="text" class="form-control" name="tax" value="{{ old('tax') }}" readonly>
-                                @error('tax')
-                                    <div class="alert alert-warning" role="alert">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            
+                            <br>                            
                             <div class="form-group">
                                 <label class="form-label">SSS</label>
-                                <select class="form-control" name="sss" id ="sss">
+                                <select class="form-control" name="sss">
                                     <option value="" {{ old('sss') == '0' ? 'selected' : '' }}>0</option>
                                     <option value="607" {{ old('sss') == '607' ? 'selected' : '' }}>607</option>
                                 </select>
@@ -249,7 +241,7 @@
                             
                             <div class="form-group">
                                 <label class="form-label">PHILHEALTH</label>
-                                <select class="form-control" name="philhealth" id="philhealth">
+                                <select class="form-control" name="philhealth">
                                     <option value="" {{ old('philhealth') == '0' ? 'selected' : '' }}>0</option>
                                     <option value="200" {{ old('philhealth') == '200' ? 'selected' : '' }}>200</option>
                                 </select>
@@ -262,7 +254,7 @@
                             
                             <div class="form-group">
                                 <label class="form-label">PAG-IBIG</label>
-                                <select class="form-control" name="pagibig" id = "pagibig">
+                                <select class="form-control" name="pagibig">
                                     <option value="" {{ old('pagibig') == '0' ? 'selected' : '' }}>0</option>
                                     <option value="200" {{ old('pagibig') == '200' ? 'selected' : '' }}>200</option>
                                 </select>
@@ -290,19 +282,6 @@
                                     </div>
                                 @enderror
                             </div>
-                            <hr>
-
-                            <!----<div class="form-group">
-                                <label class="form-label">Total Income</label>
-                                <input type="text" class="form-control" name="total_income" value="{{ old('total_income') }}" readonly>
-                                @error('total_income')
-                                    <div class="alert alert-warning" role="alert">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            -------->
-
                     
     
                             <!-- Modal Footer -->
@@ -320,46 +299,49 @@
     
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-   <script>
-    $(document).ready(function () {
-        $('#dropdown, input[name="employeeName"]').change(function () {
-            updateTotalHours();
-        });
+    <script>
+        $(document).ready(function () {
+            //$('#dropdown, input[name="start_date"], input[name="end_date"]').change(function () {
+            //    updateTotalHours();
+            
+            //});
 
-
-        function updateTotalHours() {
-            var employeeName = $('#dropdown').val();
-            var startDate = $('input[name="start_date"]').val();
-            var endDate = $('input[name="end_date"]').val();
-
-            // Make an AJAX request to get the total hours
-            $.ajax({
-                url: '{{ route('getTotalHours')}}',
-                type: 'GET',
-                data: {
-                    employeeName: employeeName,
-                    start_date: startDate,
-                    end_date: endDate
-                },
-                success: function (response) {
-                    // Update the total work hours field in the form
-                    $('input[name="twh"]').val(response.totalHours);
-                    $('input[name="employeeID"]').val(response.employeeID);
-                    $('input[name="late"]').val(response.totalLate);
-                    $('input[name="toh"]').val(response.totalOvertime);
-                    $('input[name="rph"]').val(response.rateperday);
-                    $('input[name="salary"]').val(response.salary);
-                    $('input[name="tax"]').val(response.tax);
-                    $('input[name="total_income"]').val(response.totalincome);
-                },
-                error: function (error) {
-                    console.log(error);
-                }
+            $('#dropdown, input[name="EmployeeName"]').change(function () {
+                updateTotalHours();
+            
             });
-        }
-    });
-</script>
-
+    
+            function updateTotalHours() {
+                var employeeName = $('#dropdown').val();
+                var startDate = $('input[name="start_date"]').val();
+                var endDate = $('input[name="end_date"]').val();
+                
+    
+                // Make an AJAX request to get the total hours
+                $.ajax({
+                    url: '{{ route('getTotalHours')}}',
+                    type: 'GET',
+                    data: {
+                        employeeName: employeeName,
+                        start_date: startDate,
+                        end_date: endDate
+                    },
+                    success: function (response) {
+                        // Update the total work hours field in the form
+                        $('input[name="twh"]').val(response.totalHours);    
+                        $('input[name="employeeID"]').val(response.employeeID);
+                        $('input[name="late"]').val(response.totalLate);
+                        $('input[name="toh"]').val(response.totalOvertime);
+                        $('input[name="rph"]').val(response.rateperday);
+                        $('input[name="salary"]').val(response.salary);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+    </script>
         
 </body>
 </html>

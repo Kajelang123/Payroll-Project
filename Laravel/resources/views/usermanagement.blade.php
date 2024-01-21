@@ -4,7 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <title>Payroll System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" type="image/png" href="{{ asset('WJMLOGO.png') }}">
+    <title>User Management</title>
+    <style>
+        .navbar {
+        background-color: #FFD580; /* Change this color to your desired background color */
+        border: none; /* Remove the default border */
+    
+
+    }
+
+    .navbar-brand {
+        color: white; /* Change the brand text color */
+    }
+
+    .navbar-nav li a {
+        color: white; /* Change the navigation links text color */
+        font-weight: bolder;
+    }
+
+    .navbar-nav li a:hover {
+        background-color: #d36905; /* Change the color on hover */
+    }
+
+    .navbar-right {
+        margin-right: 20px; /* Adjust the right margin for the right-aligned links */
+    }
+     /* Add some basic styling to the table */
+     table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-default">
@@ -15,9 +61,10 @@
             <ul class="nav navbar-nav">
                 <li><a href="/dashboard">Home</a></li>
                 <li><a href="/UserManagement">User Management</a></li>
-                <li><a href="/employees">Employees Management</a></li>
-                <li><a href="/payroll">Payroll</a></li>
-                <li><a href="#">Reports</a></li>
+                <li><a href="/activitylogs">Activty Logs</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/login"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
     </nav>
@@ -85,7 +132,7 @@
                             <label class="form-label">Employee ID</label>
                             <input type="text" class="form-control" name="empid" placeholder="Enter your Employees ID">
             
-                            @error('fname')
+                            @error('empid')
                             <div class="alert alert-warning" role="alert">
                                 {{$message}}
                             @enderror
@@ -121,6 +168,7 @@
                             <label class="form-label" for="dropdown">User Role</label>
                             <select id="dropdown" name="userrole">
                                     <option>Admin</option>
+                                    <option>Owner</option>
                                     <option>Payroll Master</option>
                             
                             </select>
@@ -161,6 +209,8 @@
         </div>
     </div>
 </div>
+  
+
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>

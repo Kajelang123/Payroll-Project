@@ -4,7 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" type="image/png" href="{{ asset('WJMLOGO.png') }}">
+    
     <title>Payroll System</title>
+    <style>
+        /* Add some basic styling to the table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Add some hover effect to the table rows */
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        .navbar {
+        background-color: #FFD580; /* Change this color to your desired background color */
+        border: none; /* Remove the default border */
+    
+
+    }
+
+    .navbar-brand {
+        color: white; /* Change the brand text color */
+    }
+
+    .navbar-nav li a {
+        color: white; /* Change the navigation links text color */
+        font-weight: bolder;
+    }
+
+    .navbar-nav li a:hover {
+        background-color: #d36905; /* Change the color on hover */
+    }
+
+    .navbar-right {
+        margin-right: 20px; /* Adjust the right margin for the right-aligned links */
+    }
+
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-default">
@@ -12,7 +62,17 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="#">Payroll System</a>
             </div>
-        </div>
+        <ul class="nav navbar-nav">
+          <li><a href="/pmdashboard">Home</a></li>
+          <li><a href="/Timekeeping">Timekeeping</a></li>
+          <li><a href="/employees">Employees Management</a></li>
+          <li><a href="/payroll">Payroll</a></li>
+          <li><a href="/reports">Reports</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/login"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+      </div>
     </nav>
     
     <div class="container">
@@ -62,20 +122,18 @@
               <td>{{ $time->TimeIn }}</td>
               <td>{{ $time->TimeOut }}</td>
 
-              <td>
-                <a href="#" class="btn btn-primary btn-sm">Edit</a>
-            </td>
-            <td>
-                <a href="#" class="btn btn-danger btn-sm">Delete</a>
-            </td>
         </tr>
           </tr>
       @endforeach
           
         </tbody>
     </table>
+    <div class="d-flex justify-content-center">
+        {{ $timekeeping->links() }}
+    </div>
 </div>
 </div>
+
 </div>
 </div>
 

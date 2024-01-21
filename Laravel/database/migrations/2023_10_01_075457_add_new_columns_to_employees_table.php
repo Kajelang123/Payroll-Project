@@ -15,6 +15,7 @@ return new class extends Migration
         //
         $table->string('EmployeeID');
         $table->string('Department');
+        $table->decimal('rate_per_day');
         });
     }
 

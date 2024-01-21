@@ -18,8 +18,14 @@ return new class extends Migration
             $table->string('Salary');
             $table->string('RPH');
             $table->string('TotalHrs');
-            $table->string('SSS');
-            $table->string('Benefits');
+            $table->string('NetIncome');
+            $table->string('SSS')->nullable();
+            $table->string('PHILHEALTH')->nullable();
+            $table->string('PAGIBIG')->nullable();
+            $table->string('TotalDeduction');
+            $table->string('Benefits')->nullable();
+            $table->string('GrossIncome');
+            $table->decimal('Overtime', 8, 2)->nullable();
             $table->timestamps();
         });
     }

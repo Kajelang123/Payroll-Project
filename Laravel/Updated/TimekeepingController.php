@@ -17,12 +17,6 @@ class TimekeepingController extends Controller
         $timekeeping = Timekeeping::paginate(5);
         return view('timekeeping', compact('employees','timekeeping'));
     }
-
-    public function addAttendance(){
-        $timekeeping = Timekeeping::all();
-
-        return view('attendancetable', compact('timekeeping')); 
-    }
     
 
     public function scan(Request $request)
@@ -124,13 +118,13 @@ class TimekeepingController extends Controller
         return redirect()->back()->with('success', 'Time In recorded successfully.');
     }
 }
-public function checkLateArrival($employeeName, $timeIn)
+    public function checkLateArrival($employeeName, $timeIn)
 {
     
-    $expectedTimeIn = Carbon::parse('15:30:00', 'Asia/Manila');
+    $expectedTimeIn = Carbon::parse('09:30:00', 'Asia/Manila');
 
     
-    $minutesLate = max(0, $expectedTimeIn->diffInMinutes($timeIn, false));
+    $minutesLate = max(0, $expectedTimeIn->diffInMinutes($timeIn));
 
     
     $lateArrivalThreshold = 15; 

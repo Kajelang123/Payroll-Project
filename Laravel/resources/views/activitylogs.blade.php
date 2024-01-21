@@ -64,8 +64,28 @@
         margin-right: 20px; /* Adjust the right margin for the right-aligned links */
     }
 
+    table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
     </style>
-    <title>Home</title>
+    <title>Activity Logs</title>
 </head>
 <body>
   @if(Session::has('success'))
@@ -93,22 +113,38 @@
         </ul>
         </div>
       </nav>
-      <div>
-        <div class="dashboard">
-          <div class="employee-status">
-              <div class="status">
-                  <i class="fas fa-clock"></i>
-                  <span>On Time: <span>{{$onTimeCount}}</span></span>
-              </div>
-              <div class="status">
-                  <i class="fas fa-exclamation-triangle"></i>
-                  <span>Late: <span>{{$lateCount}}</span></span>
-              </div>
-              <div class="status">
-                  <i class="fas fa-users"></i>
-                  <span>Total Employees: <span>{{$totalEmployeesCount}}</span></span>
-              </div>
-          </div>
-      </div>
+      <div class="container" style="margin-top:20px">
+        <div class="row">
+            <h2>Activity Logs</h2>
+                
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Subject ID</th>
+                        <th>Subject Type</th>
+                        <th>Properties</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                  @foreach ($logs as $log)
+                  <tr>
+                      <td>{{ $log->description }}</td>
+                      <td>{{ $log->subject_id }}</td>
+                      <td>{{ $log->subject_type }}</td>
+                      <td>{{ $log->properties }}</td>
+                </tr>
+                  </tr>
+              @endforeach
+                  
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-center">
+                {{ $logs->links() }}
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\UserManagement;
 use Illuminate\Support\Facades\Auth;
 use Hash;
+use Spatie\ActivityLog\Models\Activity;
 use Session;
 
 class UserManagementController extends Controller
@@ -17,20 +18,20 @@ class UserManagementController extends Controller
 
     public function adduser(Request $request){
             $request->validate([
-            'empid' => 'required',
-            'fname' => 'required',
-            'mname' => 'required',
-            'lname' => 'required',
+            'empid' => 'required|min:10|unique:user_management,EmployeeID',
+            'fname' => 'required|regex:/^[a-zA-Z0-9\s]+$/',
+            'mname' => 'regex:/^[a-zA-Z0-9\s]+$/',
+            'lname' => 'required|regex:/^[a-zA-Z0-9\s]+$/',
             'userrole' => 'required',
-            'email' => 'required',
-            'password' => 'required',
+            'email' => 'required|email|ends_with:gmail.com,yahoo.com.|unique:user_management,Email',
+            'password' => 'required|min:5|max:10',
            
         ]);
         $id = $request->id;
         $empid = $request->empid;
-        $fname = $request->fname;
-        $mname = $request->mname;
-        $lname = $request->lname;
+        $fname = ucwords(strtolower($request->fname));
+        $mname = ucwords(strtolower($request->mname));
+        $lname = ucwords(strtolower($request->lname));
         $userrole = $request->userrole;
         $email = $request->email;
         $password = bcrypt($request->password);
@@ -45,10 +46,63 @@ class UserManagementController extends Controller
         $user->Password = $password;
         $user->save();
         
+        activity()
+        ->performedOn($user)
+        ->causedBy(auth()->user())
+        ->withProperties(['action' => 'user_saved'])
+        ->log('New User Added Successfully');
+
         return redirect()->back()->with('success', 'New User Added Successfully');
        
         
     }
+    public function edituser($id){
+        $data = UserManagement::where('id', '=', $id)-first();
+
+        return view ('', compact('data'));
+    }
+    public function UpdateUser(Request $request){
+        $request->validate([
+            'empid' => 'required|min:10|unique:user_management,EmployeeID',
+            'fname' => 'required|regex:/^[a-zA-Z0-9\s]+$/',
+            'mname' => 'regex:/^[a-zA-Z0-9\s]+$/',
+            'lname' => 'required|regex:/^[a-zA-Z0-9\s]+$/',
+            'userrole' => 'required',
+            'email' => 'required|email|ends_with:gmail.com,yahoo.com.|unique:user_management,Email',
+            'password' => 'required|min:5|max:10',
+           
+        ]);
+        $id = $request->id;
+        $empid = $request->empid;
+        $fname = ucwords(strtolower($request->fname));
+        $mname = ucwords(strtolower($request->mname));
+        $lname = ucwords(strtolower($request->lname));
+        $userrole = $request->userrole;
+        $email = $request->email;
+        $password = bcrypt($request->password);
+
+
+        UserManagement::where('id', $id)->update([
+            'EmployeeID' => $empid,
+            'FirstName' => $fname,
+            'MiddleName' => $mname,
+            'LastName' => $lname,
+            'UserRole' => $userrole,
+            'Email' => $email,
+            'Password' => $password,
+        ]);
+    
+
+        activity()
+            ->performedOn(UserManagement::find($id))
+            ->causedBy(auth()->user())
+            ->withProperties(['action' => 'user_updated'])
+            ->log('User Updated Successfully');
+    
+        return redirect()->back()->with('success', 'User Updated Successfully');
+    }
+
+
     public function LoginM(Request $request){
         $request->validate([
             'email'=>'required',
@@ -56,23 +110,50 @@ class UserManagementController extends Controller
         ]);
         
         $user = UserManagement::where('email', '=', $request->email)->first();
-        if ($user){
-            if(Hash::check($request->pass, $user->Password)){
-                $request->session()->put('loginid', $user->id);
-                
-                if($user->UserRole ==='Admin'){
-                    return redirect('/UserManagement');
-                } elseif($user->UserRole ==='Payroll Master'){
-                    return redirect('/payroll');
-                }
-            }
-            else{
-                return redirect()->back()->with('failed', 'Password Not Matches');
-            }
+       
+
+if ($user) {
+    if (Hash::check($request->pass, $user->Password)) {
+        $request->session()->put('loginid', $user->id);
+
+        if ($user->UserRole === 'Admin') {
+            activity()
+            ->performedOn($user)
+            ->causedBy(auth()->user())
+            ->withProperties(['action' => 'user_log'])
+            ->log('Welcome, Admin!');
+            return redirect('/dashboard')->with('success', 'Welcome, Admin!');
+        } else if ($user->UserRole === 'Payroll Master') {
+            activity()
+            ->performedOn($user)
+            ->causedBy(auth()->user())
+            ->withProperties(['action' => 'user_log'])
+            ->log('Welcome, Payroll Master');
+            return redirect('/pmdashboard')->with('success', 'Welcome, Payroll Master!');
+        } else if ($user->UserRole === 'Owner') {
+            activity()
+            ->performedOn($user)
+            ->causedBy(auth()->user())
+            ->withProperties(['action' => 'user_log'])
+            ->log('Welcome, Owner!');
+            return redirect('/owdashboard')->with('success', 'Welcome, Owner!');
+        } else {
+            
+            return redirect()->back()->with('failed', 'Invalid User Role');
         }
-        else{
-            return redirect()->back()->with('failed', 'Invalid Credentials');
-        }
+    } else {
+        activity()
+            ->performedOn($user)
+            ->causedBy(auth()->user())
+            ->withProperties(['action' => 'user_log'])
+            ->log('Password does not match');
+        return redirect()->back()->with('failed', 'Password does not match');
+        
+    }
+}   else {
+        return redirect()->back()->with('failed', 'Invalid Credentials');
+}
+
 
     }
 }

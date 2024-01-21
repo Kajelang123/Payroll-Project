@@ -17,6 +17,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'timezone' => 'Asia/Manila',
 
     /*
     |--------------------------------------------------------------------------
@@ -30,6 +31,16 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    'providers' => [
+        // ...
+        Barryvdh\DomPDF\ServiceProvider::class,
+    ],
+
+    'aliases' => [
+        // ...
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+        'DomPDF' => Barryvdh\DomPDF\Facade::class,
+    ],
 
     /*
     |--------------------------------------------------------------------------
