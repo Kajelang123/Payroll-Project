@@ -108,6 +108,16 @@
                     </div>
                 @enderror
             </div>
+            <div class="form-group">
+                <label class="form-label">EmployeeID</label>
+                <input type="text" class="form-control resizable-input" name="bhr" id="employeeID" value="{{ old('employeeID') }}" readonly>
+
+                @error('employeeID')
+                    <div class="alert alert-warning" role="alert">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
             <div class ="form-group">
                 <label for="start_date">Start Date:</label>
                 <input type="date" name="start_date" style="padding-right: 20px;" required>
@@ -138,7 +148,7 @@
                       <td>{{ $time->created_at->format('Y-m-d') }}</td>
                       <td>{{ $time->TimeIn }}</td>
                       <td>{{ $time->TimeOut }}</td>
-                      <td>{{ $time->Overtime }}</td>
+                      <td> <input type="text" class="form-control resizable-input" name="bhr" id="employeeID" value="{{ old('employeeID') }}" readonly> </td>
                       <td>{{ $time->Overtime }}</td>
                       <td><input type="checkbox" name="" id=""></td>
                       <td><input type="checkbox" name="" id=""></td>
@@ -189,9 +199,10 @@
                     $('input[name="salary"]').val(response.salary);
                     $('input[name="tax"]').val(response.tax);
                     $('input[name="total_income"]').val(response.totalincome);
-
+                    $('input[name="bhr"]').val(response.totalHours);
+                    
                     // Update the table content
-                    updateTable(response.timekeepingData);
+                    updateTable(response.timekeepingData, response);
                 },
                 error: function (error) {
                     console.log(error);
@@ -199,17 +210,20 @@
             });
         }
 
-        function updateTable(timekeepingData) {
+        function updateTable(timekeepingData, response) {
             var tableBody = $('.table tbody');
             tableBody.empty(); // Clear existing table rows
-
+            var counter = 0;
+            var totalhrpd = JSON.parse(response.totalhoursperday);
             // Loop through the timekeeping data and append rows to the table
             $.each(timekeepingData, function (index, time) {
+                
+                
                 var newRow = '<tr>';
-                newRow += '<td>' + new Date(time.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) + '</td>';
+                newRow += '<td>' + new Date(time.created_at).toISOString().slice(0, 10) + '</td>';
                 newRow += '<td>' + time.TimeIn + '</td>';
                 newRow += '<td>' + time.TimeOut + '</td>';
-                newRow += '<td>' + time.TimeOut + '</td>';
+                newRow += '<td><input type="text" class="form-control resizable-input" name="bhr' + index +   '" readonly></td>';
                 newRow += '<td>' + time.TimeOut + '</td>';
                 newRow += '<td><input type="checkbox" name="basicHour" id="basicHour' + index + '"></td>';
                 newRow += '<td><input type="checkbox" name="basicHour" id="basicHour' + index + '"></td>';
@@ -217,6 +231,19 @@
                 newRow += '<td><input type="checkbox" name="basicHour" id="basicHour' + index + '"></td>';
                 newRow += '<td><input type="checkbox" name="basicHour" id="basicHour' + index + '"></td>';
                 tableBody.append(newRow);
+
+
+                console.log(response.totalhoursperday);
+
+
+
+
+                
+
+                $('input[name="bhr' + index + '"]').val(totalhrpd[counter]);
+                counter += 1;
+
+
             });
         }
     });

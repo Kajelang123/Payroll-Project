@@ -67,13 +67,14 @@ class Payroll extends Controller
         $trulab = $request->pagibig;
         $totalLate = $request->late;
         $totalovertime = $request->toh;
-        $totalovertimecalculation = $rph * $totalovertime;
+        $taxs = $request->tax;
         $totalHoursWorked = $twh;
-        $totalHoursWorkedwithLate = $totalHoursWorked - $totalLate;
-        $grossincome = ($rph/8 )* $totalHoursWorkedwithLate;
-        $totaldeduction = $s3 + $ph + $trulab;
+        $totalHoursWorkedwithLate = $totalHoursWorked - $totalovertime;
+
+        $salary = $request->salary;
+        $grossincome = $salary +  $benefits;
+        $totaldeduction = $s3 + $ph + $trulab +$taxs;
         $netincome = $grossincome - $totaldeduction;
-        $salary = $rph * $totalHoursWorkedwithLate;
 
         $tax = new Taxation();
         $tax->EmployeeID = $employeeID;
@@ -82,6 +83,10 @@ class Payroll extends Controller
         $tax->PHILHEALTH = $philhealth;
         $tax->PAGIBIG = $pagibig;
         $tax->save();
+
+        $startDate = Carbon::parse($request->start_date);
+        $endDate = Carbon::parse($request->end_date);
+        $weekNumber = $startDate->weekOfMonth;
 
         $pay = new PayrollE();
         $pay->employeeID = $employeeID; 
@@ -97,6 +102,7 @@ class Payroll extends Controller
         $pay->TotalDeduction =$totaldeduction;
         $pay->Benefits = $benefits;
         $pay->NetIncome = $netincome;
+        $pay->week_number= $weekNumber;
         $pay->save();
     
         return redirect()->back()->with('success', 'Employee Payroll Added Successfully');
@@ -115,7 +121,7 @@ class Payroll extends Controller
         $employeeName = $request->input('employeeName');
         $startDate = $request->input('start_date');
         $endDate =$request->input('end_date');
-
+        $benefits = $request->input('benefits');
         $employeeID = Timekeeping::where('EmployeeName', $employeeName)
         ->value('EmployeeID');
 
@@ -126,20 +132,46 @@ class Payroll extends Controller
         $totalOvertime = $this->calculateTotalOvertime($employeeName, $startDate, $endDate);
         $rateperday = $this->GetRatePerDay($employeeID);
         $rph = $rateperday /8;
-        $totalhourswithLate = $totalHours - $totalLate;
-    
+        $totalhourswithLate = $totalHours - $totalOvertime;
 
-        $salary = $totalhourswithLate * $rph;
+
+
+        
+
+        $OTrate = ($rph * 0.30) + $rph;
+        $OTpay = $OTrate * $totalOvertime;
+
+        $salary = ($rph * $totalhourswithLate) + $OTpay + $benefits;
 
         $tax = $this->GetTax($salary);
         
         $totalincome = $salary - $tax;
         $timekeepingData = $this->getTimekeepingData($employeeID, $startDate, $endDate);
 
+
+
+        if ($this->isLastWeekOfMonth($startDate) && $this->isLastWeekOfMonth($endDate)) {
+           
+            $totalgrossincome3weeks = $this->calculateTotalGrossByWeeks123($employeeName);
+
+
+            $totallastweek = $totalgrossincome3weeks + $salary;
+
+
+
+            $pagibig = $this->GetPagibig($totallastweek);
+            $ph = $this->GetPH($totallastweek);
+
+        } else {
+            // Set default values if not the last week of the month
+            $pagibig = 0;
+            $ph = 0;
+            $totalgrossincome3weeks = 0;
+        }
         
         
         return response()->json(['totalHours' => $totalHours, 'totalLate' => $totalLate, 'employeeID' =>$employeeID,
-         'totalOvertime' => $totalOvertime, 'rateperday' => $rateperday, 'salary'=> $salary, 'tax' => $tax, 'totalincome' => $totalincome, 'timekeepingData'=> $timekeepingData ]);
+         'totalOvertime' => $totalOvertime, 'rateperday' => $rateperday, 'salary'=> $salary, 'tax' => $tax, 'totalincome' => $totalincome, 'timekeepingData'=> $timekeepingData, 'pagibig' => $pagibig, 'ph'=> $ph, 'totalgrossincome3weeks' =>$totalgrossincome3weeks, 'totallastweek' =>$totallastweek ]);
     }
     public function calculateTotalHoursForDateRange($employeeName, $startDate, $endDate)
     {
@@ -317,5 +349,115 @@ protected function getTimekeepingData($employeeID, $startDate, $endDate)
 
 
 }
+public function calculateTotalHoursPerDay($employeeName, $startDate, $endDate)
+{
+    $startDate = Carbon::parse($startDate);
+    $endDate = Carbon::parse($endDate)->endOfDay();
+
+    $timekeepingRecords = Timekeeping::where('EmployeeName', $employeeName)
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->whereNotNull('TimeIn')
+        ->whereNotNull('TimeOut')
+        ->get();
+
+    $totalHoursPerDay = array();
+
+    foreach ($timekeepingRecords as $record) {
+        $dateKey = $record->created_at->toDateString();
+
+        // Convert 'TimeIn' and 'TimeOut' to Carbon instances
+        $timeIn = Carbon::parse($record->TimeIn);
+        $timeOut = Carbon::parse($record->TimeOut);
+
+        // Calculate the difference between TimeOut and TimeIn for each record
+        $hoursDiff = $timeIn->diffInHours($timeOut);
+        $minutesDiff = $timeIn->diffInMinutes($timeOut) % 60;
+        $totalHours = $hoursDiff + ($minutesDiff / 60);
+
+    
+        // Accumulate total hours per day
+        $totalHoursPerDay[] += $totalHours;
+    }
+
+    // Round the total hours per day to two decimal places
+    foreach ($totalHoursPerDay as &$total) {
+        $total = round($total, 2);
+    }
+
+    return $totalHoursPerDay;
+}
+
+public function GetPagibig($salary){
+
+    $pagibigval = $salary * 0.02;
+
+    return $pagibigval;
+}
+
+public function GetPH($salary){
+
+    $ph = $salary * 0.05;
+
+    return $ph;
+}
+
+protected function calculateTotalGrossByWeeks123($employeeName)
+{
+    $month = 1; // Assuming you want to calculate for the current month
+    $year = date('Y');  // Assuming you want to calculate for the current year
+
+    // Fetch gross income for week 1
+    $totalGrossWeek1 = PayrollE::whereMonth('created_at', $month)
+        ->whereYear('created_at', $year)
+        ->where('week_number', 1)
+        ->where('employeeName', $employeeName) // Filter by employee name
+        ->sum('GrossIncome');
+
+    // Fetch gross income for week 2
+    $totalGrossWeek2 = PayrollE::whereMonth('created_at', $month)
+        ->whereYear('created_at', $year)
+        ->where('week_number', 2)
+        ->where('employeeName', $employeeName) // Filter by employee name
+        ->sum('GrossIncome');
+
+    // Fetch gross income for week 3
+    $totalGrossWeek3 = PayrollE::whereMonth('created_at', $month)
+        ->whereYear('created_at', $year)
+        ->where('week_number', 3)
+        ->where('employeeName', $employeeName) // Filter by employee name
+        ->sum('GrossIncome');
+
+    
+        $totalGrossWeek4 = PayrollE::whereMonth('created_at', $month)
+        ->whereYear('created_at', $year)
+        ->where('week_number', 4)
+        ->where('employeeName', $employeeName) // Filter by employee name
+        ->sum('GrossIncome');
+
+    // Calculate the total gross income for weeks 1 to 3
+    $totalGrossWeeks1to3 = $totalGrossWeek1 + $totalGrossWeek2 + $totalGrossWeek3 + $totalGrossWeek4;
+
+    return $totalGrossWeeks1to3;
+}
+
+private function isLastWeekOfMonth($date)
+{
+    $carbonDate = Carbon::parse($date);
+    $lastOfMonth = $carbonDate->copy()->endOfMonth();
+
+    // Check if the given date is in the last week of the month
+    $isLastWeekOfMonth = $carbonDate->diffInDays($lastOfMonth, false) < 7;
+
+    // Check if the given date is in the first week of the month
+    $isFirstWeekOfMonth = $carbonDate->day <= 7;
+
+    return $isLastWeekOfMonth || $isFirstWeekOfMonth;
+}
+
+public function GetSSS($salary){
+
+    
+}
+
 
 }

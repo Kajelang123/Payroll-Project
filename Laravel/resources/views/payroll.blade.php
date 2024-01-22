@@ -83,7 +83,9 @@
         <div class="row">
             <div style="float: right">
         
-                <div style="float: right"><a href="{{url('attendancetable')}}"><button type="button" class="btn btn-info">Add</button></a>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
+                    Add
+                </button>
             </div>
             <h2>Payroll</h2>
             
@@ -193,7 +195,7 @@
                                     </div>
                                 @enderror
                             </div>
-                           <!----<div class="form-group">
+                            
                                 <label class="form-label">Salary</label>
                                 <input type="text" class="form-control" name="salary"  value="{{ old('salary') }}" readonly>
                                 @error('salary')
@@ -201,8 +203,16 @@
                                         {{ $message }}
                                     </div>
                                 @enderror
-                           ----->
+                        
+                                <div class="form-group">
                             
+                                    <input type="hidden" class="form-control" name="totalgrossincome"  readonly>
+                                    @error('rph')
+                                        <div class="alert alert-warning" role="alert">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
                             <div class="form-group">
                                 <label class="form-label">Total Overtime Hours</label>
                                 <input type="text" class="form-control" name="toh"  value="{{ old('toh') }}" readonly>
@@ -236,10 +246,7 @@
                             
                             <div class="form-group">
                                 <label class="form-label">SSS</label>
-                                <select class="form-control" name="sss" id ="sss">
-                                    <option value="" {{ old('sss') == '0' ? 'selected' : '' }}>0</option>
-                                    <option value="607" {{ old('sss') == '607' ? 'selected' : '' }}>607</option>
-                                </select>
+                                <input type="text" class="form-control" name="sss"  value="{{ old('sss') }}" readonly>
                                 @error('sss')
                                     <div class="alert alert-warning" role="alert">
                                         {{ $message }}
@@ -249,10 +256,7 @@
                             
                             <div class="form-group">
                                 <label class="form-label">PHILHEALTH</label>
-                                <select class="form-control" name="philhealth" id="philhealth">
-                                    <option value="" {{ old('philhealth') == '0' ? 'selected' : '' }}>0</option>
-                                    <option value="200" {{ old('philhealth') == '200' ? 'selected' : '' }}>200</option>
-                                </select>
+                                <input type="text" class="form-control" name="philhealth"  value="{{ old('philhealth') }}" readonly>
                                 @error('philhealth')
                                     <div class="alert alert-warning" role="alert">
                                         {{ $message }}
@@ -262,10 +266,7 @@
                             
                             <div class="form-group">
                                 <label class="form-label">PAG-IBIG</label>
-                                <select class="form-control" name="pagibig" id = "pagibig">
-                                    <option value="" {{ old('pagibig') == '0' ? 'selected' : '' }}>0</option>
-                                    <option value="200" {{ old('pagibig') == '200' ? 'selected' : '' }}>200</option>
-                                </select>
+                                <input type="text" class="form-control" name="pagibig"  value="{{ old('pagibig') }}" readonly>
                                 @error('pagibig')
                                     <div class="alert alert-warning" role="alert">
                                         {{ $message }}
@@ -342,7 +343,7 @@
                     end_date: endDate
                 },
                 success: function (response) {
-                    // Update the total work hours field in the form
+                    
                     $('input[name="twh"]').val(response.totalHours);
                     $('input[name="employeeID"]').val(response.employeeID);
                     $('input[name="late"]').val(response.totalLate);
@@ -351,6 +352,9 @@
                     $('input[name="salary"]').val(response.salary);
                     $('input[name="tax"]').val(response.tax);
                     $('input[name="total_income"]').val(response.totalincome);
+                    $('input[name="pagibig"]').val(response.pagibig);
+                    $('input[name="philhealth"]').val(response.ph);
+                    $('input[name="totalgrossincome"]').val(response.totallastweek);                     
                 },
                 error: function (error) {
                     console.log(error);

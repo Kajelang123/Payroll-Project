@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('Benefits')->nullable();
             $table->string('GrossIncome');
             $table->decimal('Overtime', 8, 2)->nullable();
+            $table->integer('week_number')->nullable();
             $table->timestamps();
         });
     }
